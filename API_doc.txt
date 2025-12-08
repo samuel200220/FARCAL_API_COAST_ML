@@ -1,0 +1,167 @@
+# Documentation API Farcal - Jour 1
+
+## Installation et Lancement
+
+### Installation des dépendances
+```bash
+pip install fastapi uvicorn joblib pandas pydantic
+```
+
+### Lancer l'API
+```bash
+uvicorn ml_api:app --reload
+```
+
+L'API sera accessible sur: http://localhost:8000
+
+---
+
+## Endpoints Disponibles
+
+### 1. GET / (Root)
+Retourne les informations générales de l'API
+
+**Exemple:**
+```bash
+curl http://localhost:8000/
+```
+
+**Réponse:**
+```json
+{
+  "message": "Bienvenue sur l'API Farcal",
+  "version": "1.0.0",
+  "endpoints": ["/health", "/predict", "/docs"]
+}
+```
+
+---
+
+### 2. GET /health
+Vérifie l'état de santé de l'API
+
+**Exemple:**
+```bash
+curl http://localhost:8000/health
+```
+
+**Réponse:**
+```json
+{
+  "status": "ok",
+  "service": "Farcal ML API",
+  "message": "API is healthy and running"
+}
+```
+
+---
+
+### 3. POST /predict
+Prédit le tarif d'un trajet de taxi
+
+**Format de la requête (JSON):**
+```json
+{
+  "distance_km": 10.5,
+  "heure": 18,
+  "jour_semaine": 2,
+  "etat_route": 3,
+  "pluie": 0,
+  "embouteillage": 1
+}
+```
+
+**Description des champs:**
+- `distance_km`: Distance en kilomètres (float, > 0)
+- `heure`: Heure de la journée (int, 0-23)
+- `jour_semaine`: Jour (int, 0=Lundi ... 6=Dimanche)
+- `etat_route`: État route (int, 1=Mauvaise, 2=Moyenne, 3=Bonne)
+- `pluie`: Pluie (int, 0=Non, 1=Oui)
+- `embouteillage`: Embouteillage (int, 0=Non, 1=Oui)
+
+**Exemple avec curl:**
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "distance_km": 10.5,
+    "heure": 18,
+    "jour_semaine": 2,
+    "etat_route": 3,
+    "pluie": 0,
+    "embouteillage": 1
+  }'
+```
+
+**Réponse:**
+```json
+{
+  "predicted_fare": 2000.0,
+  "distance_km": 10.5,
+  "status": "success"
+}
+```
+
+**Note:** Pour l'instant, l'API retourne un prix fixe de 2000 CFA.
+Demain (Jour 2), elle utilisera le vrai modèle ML entraîné.
+
+---
+
+## Tests avec Postman
+
+### Configuration Postman:
+1. Créer une nouvelle requête POST
+2. URL: `http://localhost:8000/predict`
+3. Headers: `Content-Type: application/json`
+4. Body (raw, JSON):
+```json
+{
+  "distance_km": 15.0,
+  "heure": 8,
+  "jour_semaine": 0,
+  "etat_route": 2,
+  "pluie": 1,
+  "embouteillage": 1
+}
+```
+
+---
+
+## Documentation Interactive
+
+FastAPI génère automatiquement une documentation interactive:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+Vous pouvez tester tous les endpoints directement depuis le navigateur!
+
+---
+
+## Gestion des Erreurs
+
+### Distance invalide (≤ 0):
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"distance_km": -5, "heure": 10, "jour_semaine": 1, "etat_route": 2, "pluie": 0, "embouteillage": 0}'
+```
+
+**Réponse (400):**
+```json
+{
+  "detail": "La distance doit être positive"
+}
+```
+
+### Champ manquant:
+Si un champ requis est manquant, FastAPI retourne automatiquement une erreur 422 avec les détails.
+
+---
+
+## Prochaines Étapes (Jour 2)
+
+Demain, nous allons:
+1. Charger le modèle ML (`farcal_model_v1.pkl`)
+2. Remplacer le prix fixe par une vraie prédiction
+3. Ajouter plus de validations
+4. Optimiser les performances

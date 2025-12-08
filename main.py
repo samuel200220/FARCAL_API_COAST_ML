@@ -1,9 +1,9 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field, validator
+from fastapi import FastAPI, HTTPException # pyright: ignore[reportMissingImports]
+from pydantic import BaseModel, Field, validator # pyright: ignore[reportMissingImports]
 from typing import Literal
-import pandas as pd
-import joblib
-import numpy as np
+import pandas as pd # pyright: ignore[reportMissingModuleSource]
+import joblib # pyright: ignore[reportMissingImports]
+import os
 
 app = FastAPI(
     title="API Prédiction Tarif Taxi Yaoundé",
@@ -84,3 +84,9 @@ def predict(data: Features):
 
 @app.get("/health")
 def health(): return {"status": "OK", "model": "loaded"}
+
+# Pour la production, récupérez le port depuis les variables d'environnement
+if __name__ == "__main__":
+    import uvicorn # pyright: ignore[reportMissingImports]
+    port = int(os.environ.get("PORT", 8000))  # Render fournit le PORT
+    uvicorn.run(app, host="0.0.0.0", port=port)

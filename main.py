@@ -3,12 +3,20 @@ from pydantic import BaseModel, Field, validator # pyright: ignore[reportMissing
 from typing import Literal
 import pandas as pd # pyright: ignore[reportMissingModuleSource]
 import joblib # pyright: ignore[reportMissingImports]
-import os
+from fastapi.middleware.cors import CORSMiddleware # pyright: ignore[reportMissingImports]
 
 app = FastAPI(
     title="API Prédiction Tarif Taxi Yaoundé",
     description="Prédiction du prix de course en FCFA - Version finale propre",
     version="2.0.0"
+)
+# Après avoir créé l'app FastAPI
+app.add_middleware(
+    CORSMiddleware, # pyright: ignore[reportUndefinedVariable]
+    allow_origins=["*"],  # En production, remplacez par vos domaines
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Chargement du modèle + préprocesseur (si tu as sauvegardé un Pipeline)

@@ -1,8 +1,8 @@
 // TaxiPredictionService.java
-package com.yaounde.taxi.service;
+package com.yaounde.farcal.service;
 
 import ai.onnxruntime.*;
-import com.yaounde.taxi.dto.FeaturesRequest;
+import com.yaounde.farcal.dto.FeaturesRequest;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -32,7 +32,7 @@ public class TaxiPredictionService {
         env = OrtEnvironment.getEnvironment();
         
         String modelPath = getClass().getClassLoader()
-            .getResource("models/Random Forest_yaounde_target_encoder.onnx")
+            .getResource("models/RandomForest_yaounde_target_encoder.onnx")
             .getPath();
         
         session = env.createSession(modelPath, new OrtSession.SessionOptions());

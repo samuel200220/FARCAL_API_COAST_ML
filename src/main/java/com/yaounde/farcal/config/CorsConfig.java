@@ -1,5 +1,5 @@
 // CorsConfig.java
-package com.yaounde.taxi.config;
+package com.yaounde.farcal.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
